@@ -57,7 +57,7 @@ const TerminalUi = ({ style, initialFeed = [], className, title, onCommand = asy
         let originalCommand = (currentLine ?? "");
         let command = originalCommand.replaceAll(" ", "");
         const cmdResult = await onCommand(command);
-        let foundCommand = cmdResult === undefined;
+        let foundCommand = cmdResult !== undefined;
         if (!foundCommand)
             newFeed.push(commandNotFoundMessage(originalCommand));
         else {
