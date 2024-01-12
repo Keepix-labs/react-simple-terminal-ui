@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import "98.css";
 declare const Frames: {
     readonly None: "None";
     readonly Win98: "Win98";
@@ -7,23 +6,18 @@ declare const Frames: {
     readonly GnomeUbuntu: "GnomeUbuntu";
 };
 type Frames = typeof Frames[keyof typeof Frames];
-type Command = {
-    command: string;
-    print?: string | ReactNode;
-    callback?: Function;
-};
 type TerminalUiProps = {
     style?: object;
     title?: string;
     initialFeed?: Array<string | ReactNode>;
     className?: string;
     recordClassName?: string;
-    commands: Array<Command>;
+    onCommand: (cmd: string) => Promise<string>;
     prompt?: string;
     commandNotFoundMessage?: (cmd: string) => string;
     blinkerComponent?: ReactNode;
     blinkerChar?: string;
     frame?: Frames;
 };
-declare const TerminalUi: ({ style, initialFeed, className, title, commands, prompt, recordClassName, commandNotFoundMessage, blinkerComponent, blinkerChar, frame }: TerminalUiProps) => JSX.Element;
+declare const TerminalUi: ({ style, initialFeed, className, title, onCommand, prompt, recordClassName, commandNotFoundMessage, blinkerComponent, blinkerChar, frame }: TerminalUiProps) => JSX.Element;
 export default TerminalUi;

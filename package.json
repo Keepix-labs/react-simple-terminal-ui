@@ -1,11 +1,11 @@
 {
-  "name": "react-simple-terminal-ui",
-  "version": "1.0.0",
+  "name": "keepix-react-simple-terminal-ui",
+  "version": "1.0.1",
   "description": "a simple interactive terminal ui react component that allows you to programmatically emulate terminal behaviour.",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/movcmpret/react-simple-terminal-ui.git"
+    "url": "git+https://github.com/Keepix-labs/react-simple-terminal-ui.git"
   },
   "files": [
     "dist"
@@ -34,15 +34,10 @@
   "author": "movcmpret",
   "license": "MIT",
   "devDependencies": {
-    "@types/react": "^18.2.40",
-    "@types/react-dom": "^18.2.17",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
     "typescript": "^5.3.2"
   },
-  "peerDependencies": {
-    "react": "16-18",
-    "react-dom": "16-18"
-  },
   "dependencies": {
-    "98.css": "^0.1.20"
   }
 }

@@ -28,14 +28,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const Blinker_1 = __importDefault(require("./Blinker"));
-require("98.css");
+// import "98.css";
 const Frames = {
     None: 'None',
     Win98: 'Win98',
     MacOs: 'MacOs',
     GnomeUbuntu: 'GnomeUbuntu',
 };
-const TerminalUi = ({ style, initialFeed = [], className, title, commands = [], prompt, recordClassName, commandNotFoundMessage = (cmd) => `command '${cmd}' not found.`, blinkerComponent, blinkerChar, frame = Frames.None }) => {
+const TerminalUi = ({ style, initialFeed = [], className, title, onCommand = async (cmd) => '', prompt, recordClassName, commandNotFoundMessage = (cmd) => `command '${cmd}' not found.`, blinkerComponent, blinkerChar, frame = Frames.None }) => {
     const [focused, setFocused] = (0, react_1.useState)(true);
     const [feed, setFeed] = (0, react_1.useState)([]);
     const [currentLine, setCurrentLine] = (0, react_1.useState)("");
@@ -52,18 +52,16 @@ const TerminalUi = ({ style, initialFeed = [], className, title, commands = [], 
     /**
  * Called when the user hits Enter.
 */
-    const interpretCommand = () => {
+    const interpretCommand = async () => {
         const newFeed = [...feed, createdPrompt + currentLine];
         let originalCommand = (currentLine ?? "");
         let command = originalCommand.replaceAll(" ", "");
-        let foundCommand = commands?.find(cmd => ("" + cmd?.command).replaceAll(" ", "") == command);
+        const cmdResult = await onCommand(command);
+        let foundCommand = cmdResult === undefined;
         if (!foundCommand)
             newFeed.push(commandNotFoundMessage(originalCommand));
         else {
-            if (foundCommand.print)
-                newFeed.push(foundCommand.print);
-            if (typeof foundCommand.callback == "function")
-                foundCommand.callback();
+            newFeed.push(cmdResult);
         }
         setCurrentLine("");
         setFeed(newFeed);
@@ -80,7 +78,8 @@ const TerminalUi = ({ style, initialFeed = [], className, title, commands = [], 
         if (key == "Backspace")
             return setCurrentLine(currentLine.substring(0, currentLine?.length - 1));
         if (key == "Enter")
-            return interpretCommand();
+            interpretCommand().then(() => { }).catch((e) => console.log(e));
+        return;
     };
     const onFocusHandler = () => {
         setFocused(true);

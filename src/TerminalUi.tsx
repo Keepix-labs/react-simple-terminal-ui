@@ -1,7 +1,7 @@
 
 import React, { ReactNode, useEffect, useMemo, useState } from "react"
 import Blinker from "./Blinker"
-import "98.css";
+// import "98.css";
 
 const Frames = {
     None: 'None',
@@ -24,7 +24,7 @@ type TerminalUiProps = {
     initialFeed?: Array<string|ReactNode>,
     className?: string,
     recordClassName?: string,
-    commands: Array<Command>,
+    onCommand: (cmd: string) => Promise<string>,
     prompt?: string,
     commandNotFoundMessage?: (cmd: string) => string,
     blinkerComponent?: ReactNode,
@@ -36,7 +36,7 @@ const TerminalUi = ({ style,
     initialFeed = [],
     className,
     title,
-    commands = [],
+    onCommand = async (cmd) => '',
     prompt,
     recordClassName,
     commandNotFoundMessage = (cmd) => `command '${cmd}' not found.`,
@@ -67,18 +67,16 @@ const TerminalUi = ({ style,
     /** 
  * Called when the user hits Enter. 
 */
-    const interpretCommand = () => {
+    const interpretCommand = async () => {
         const newFeed = [...feed, createdPrompt + currentLine]
         let originalCommand = (currentLine ?? "")
         let command = originalCommand.replaceAll(" ", "")
-        let foundCommand = commands?.find(cmd => ("" + cmd?.command).replaceAll(" ", "") == command)
+        const cmdResult = await onCommand(command);
+        let foundCommand = cmdResult !== undefined;
         if (!foundCommand)
             newFeed.push(commandNotFoundMessage(originalCommand))
         else {
-            if (foundCommand.print)
-                newFeed.push(foundCommand.print)
-            if (typeof foundCommand.callback == "function")
-                foundCommand.callback()
+            newFeed.push(cmdResult)
         }
         setCurrentLine("")
         setFeed(newFeed)
@@ -96,7 +94,8 @@ const TerminalUi = ({ style,
         if (key == "Backspace")
             return setCurrentLine(currentLine.substring(0, currentLine?.length - 1))
         if (key == "Enter")
-            return interpretCommand()
+            interpretCommand().then(() => {}).catch((e) => console.log(e));
+        return ;
     }
 
 
