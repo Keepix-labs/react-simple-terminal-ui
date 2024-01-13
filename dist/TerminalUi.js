@@ -40,7 +40,7 @@ const TerminalUi = ({ style, initialFeed = [], className, title, onCommand = asy
     const [feed, setFeed] = (0, react_1.useState)([]);
     const [currentLine, setCurrentLine] = (0, react_1.useState)("");
     const uid = (0, react_1.useMemo)(() => Math.random().toString(16).slice(2), []); // need a uid for auto scroll
-    const hiddenInputId = uid + "_hidden_input"; //need a hidden input for mobile compatibility
+    const hiddenInputId = "keepix_hidden_input"; //need a hidden input for mobile compatibility
     (0, react_1.useEffect)(() => {
         setFeed(initialFeed);
     }, []);
@@ -55,13 +55,12 @@ const TerminalUi = ({ style, initialFeed = [], className, title, onCommand = asy
     const interpretCommand = async () => {
         const newFeed = [...feed, createdPrompt + currentLine];
         let originalCommand = (currentLine ?? "");
-        let command = originalCommand.replaceAll(" ", "");
-        const cmdResult = await onCommand(command);
+        const cmdResult = await onCommand(originalCommand);
         let foundCommand = cmdResult !== undefined;
         if (!foundCommand)
             newFeed.push(commandNotFoundMessage(originalCommand));
         else {
-            newFeed.push(cmdResult);
+            newFeed.push(...cmdResult.split('\n'));
         }
         setCurrentLine("");
         setFeed(newFeed);
@@ -138,7 +137,7 @@ const TerminalUi = ({ style, initialFeed = [], className, title, onCommand = asy
     const createdPrompt = getPrompt();
     const blinker = blinkerComponent ?? react_1.default.createElement(Blinker_1.default, { char: getBlinkerChar() });
     return wrapFrame(react_1.default.createElement("div", { tabIndex: 0, id: uid, className: getRootClassName(), style: style, onFocus: onFocusHandler, onBlur: () => setFocused(false) },
-        react_1.default.createElement("input", { style: { position: "fixed", zIndex: -1, width: "0px", height: "0px", opacity: 0 }, id: hiddenInputId, value: currentLine, onKeyDown: onKeyDownHandler, onChange: () => { } }),
+        react_1.default.createElement("input", { style: { position: "fixed", zIndex: -1, width: "0px", height: "0px", opacity: 0 }, id: hiddenInputId, autoFocus: true, value: currentLine, onKeyDown: onKeyDownHandler, onChange: () => { } }),
         feed?.map((record, i) => {
             return react_1.default.createElement("div", { className: recordClassName ?? "terminal-ui-record", key: i }, record);
         }),

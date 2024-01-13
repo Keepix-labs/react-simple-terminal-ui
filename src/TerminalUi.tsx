@@ -50,7 +50,7 @@ const TerminalUi = ({ style,
     const [currentLine, setCurrentLine] = useState<string>("")
 
     const uid = useMemo(() => Math.random().toString(16).slice(2), []) // need a uid for auto scroll
-    const hiddenInputId = uid + "_hidden_input" //need a hidden input for mobile compatibility
+    const hiddenInputId = "keepix_hidden_input" //need a hidden input for mobile compatibility
 
     useEffect(() => {
         setFeed(initialFeed)
@@ -68,15 +68,14 @@ const TerminalUi = ({ style,
  * Called when the user hits Enter. 
 */
     const interpretCommand = async () => {
-        const newFeed = [...feed, createdPrompt + currentLine]
-        let originalCommand = (currentLine ?? "")
-        let command = originalCommand.replaceAll(" ", "")
-        const cmdResult = await onCommand(command);
+        const newFeed = [...feed, createdPrompt + currentLine];
+        let originalCommand = (currentLine ?? "");
+        const cmdResult = await onCommand(originalCommand);
         let foundCommand = cmdResult !== undefined;
         if (!foundCommand)
             newFeed.push(commandNotFoundMessage(originalCommand))
         else {
-            newFeed.push(cmdResult)
+            newFeed.push(... cmdResult.split('\n'))
         }
         setCurrentLine("")
         setFeed(newFeed)
@@ -184,7 +183,7 @@ const TerminalUi = ({ style,
         onFocus={onFocusHandler}
         onBlur={() => setFocused(false)}
     >
-        <input style={{ position: "fixed", zIndex: -1, width: "0px", height: "0px", opacity: 0 }} id={hiddenInputId} value={currentLine} onKeyDown={onKeyDownHandler} onChange={() => { }} />
+        <input style={{ position: "fixed", zIndex: -1, width: "0px", height: "0px", opacity: 0 }} id={hiddenInputId} autoFocus value={currentLine} onKeyDown={onKeyDownHandler} onChange={() => { }} />
         {feed?.map((record, i) => {
             return <div className={recordClassName ?? "terminal-ui-record"} key={i}>{record}</div>
         })}
